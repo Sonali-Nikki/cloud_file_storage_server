@@ -24,6 +24,10 @@ app.get("/", (req, res) => {
   res.send("Cloud File Storage Server is running");
 });
 
+app.get("/api/test", (req, res) => {
+  res.json({ message: "Backend connected successfully 🎉" });
+});
+
 
 
 app.use("/api/auth", authRoutes);
