@@ -6,6 +6,10 @@ export const register = async (req, res) => {
   try {
     const { email, password, name } = req.body;
 
+    if (!email || !password || !name) {
+      return res.status(400).json({ message: "All fields required" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const { data, error } = await supabase
@@ -14,16 +18,26 @@ export const register = async (req, res) => {
       .select()
       .single();
 
-    if (error) return res.status(400).json({ error: error.message });
+    if (error) {
+      // 🔥 handle duplicate email clearly
+      if (error.message.includes("users_email_key")) {
+        return res.status(400).json({
+          message: "Email already registered. Please login.",
+        });
+      }
+
+      return res.status(400).json({ message: error.message });
+    }
 
     res.status(201).json({
-      message: "User registered",
-      user: { id: data.id, email: data.email }
+      message: "Registration successful",
+      user: { id: data.id, email: data.email },
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
+
 
 export const login = async (req, res) => {
   try {
