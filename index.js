@@ -20,14 +20,16 @@ app.use(
 );
 
 
-app.use(cors());
-app.use(
-  fileUpload({
-    useTempFiles: false,
-  })
-);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "/tmp"
+  })
+);
+
 
 
 const PORT = process.env.PORT || 5000;
